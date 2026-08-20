@@ -1,32 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
 
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="description"
-        content="TaskFlow is a simple and responsive task management web application.">
+    <meta name="description"
+          content="TaskFlow is a simple and responsive task management application.">
 
     <title>TaskFlow | Smart Task Manager</title>
 
     <link rel="stylesheet" href="style.css">
-
 </head>
 
 <body>
 
-    <!-- ==================== HEADER ==================== -->
+    <!-- ================= HEADER ================= -->
 
     <header class="header">
 
-        <div class="container header-container">
+        <div class="container nav-container">
 
-            <a href="#home" class="logo">
+            <a href="#home"
+               class="logo"
+               aria-label="TaskFlow home">
                 Task<span>Flow</span>
             </a>
 
@@ -35,21 +33,18 @@
                 class="menu-toggle"
                 id="menuToggle"
                 aria-label="Open navigation menu"
-                aria-expanded="false">
-
+                aria-expanded="false"
+                aria-controls="mainNav">
                 ☰
-
             </button>
 
             <nav
-                class="navigation"
-                id="navigation"
+                class="nav"
+                id="mainNav"
                 aria-label="Main navigation">
 
                 <a href="#home">Home</a>
-
                 <a href="#tasks">Tasks</a>
-
                 <a href="#about">About</a>
 
             </nav>
@@ -59,15 +54,15 @@
     </header>
 
 
-    <!-- ==================== MAIN ==================== -->
-
     <main>
 
-        <!-- ==================== HERO ==================== -->
+        <!-- ================= HOME ================= -->
 
-        <section class="hero" id="home">
+        <section
+            id="home"
+            class="hero">
 
-            <div class="container hero-grid">
+            <div class="container hero-container">
 
                 <div class="hero-content">
 
@@ -80,7 +75,7 @@
                         <span>Get things done.</span>
                     </h1>
 
-                    <p class="hero-text">
+                    <p class="hero-description">
                         TaskFlow helps you organize your daily tasks,
                         track your progress, and stay focused on what
                         matters most.
@@ -89,27 +84,33 @@
                     <a
                         href="#tasks"
                         class="primary-button">
-
                         Start Managing Tasks
-
                     </a>
 
                 </div>
 
 
-                <div class="hero-card">
+                <!-- Progress Card -->
 
-                    <div class="hero-card-header">
+                <div class="progress-card">
 
-                        <span>Today's Progress</span>
+                    <div class="progress-header">
 
-                        <span id="progressPercentage">
+                        <h2>Today's Progress</h2>
+
+                        <strong id="progressPercent">
                             0%
-                        </span>
+                        </strong>
 
                     </div>
 
-                    <div class="progress-bar">
+                    <div
+                        class="progress-bar"
+                        role="progressbar"
+                        aria-label="Today's task completion progress"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                        aria-valuenow="0">
 
                         <div
                             class="progress-fill"
@@ -129,11 +130,11 @@
         </section>
 
 
-        <!-- ==================== TASK SECTION ==================== -->
+        <!-- ================= TASKS ================= -->
 
         <section
-            class="tasks-section"
-            id="tasks">
+            id="tasks"
+            class="tasks-section">
 
             <div class="container">
 
@@ -143,9 +144,7 @@
                         YOUR WORKSPACE
                     </p>
 
-                    <h2>
-                        Today's Tasks
-                    </h2>
+                    <h2>Today's Tasks</h2>
 
                     <p>
                         Add, complete and manage your daily tasks.
@@ -154,88 +153,70 @@
                 </div>
 
 
-                <!-- ADD TASK FORM -->
+                <!-- Add Task -->
 
-                <div class="task-form">
+                <div class="task-form-card">
 
-                    <label for="taskInput">
-                        Add a new task
-                    </label>
+                    <form id="taskForm">
 
-                    <div class="input-group">
+                        <label for="taskInput">
+                            Add a new task
+                        </label>
 
-                        <input
-                            type="text"
-                            id="taskInput"
-                            placeholder="Enter your task..."
-                            autocomplete="off"
-                            maxlength="100">
+                        <div class="input-row">
 
-                        <button
-                            type="button"
-                            class="add-button"
-                            id="addTaskButton">
+                            <input
+                                type="text"
+                                id="taskInput"
+                                name="task"
+                                placeholder="Enter a task..."
+                                autocomplete="off"
+                                maxlength="100"
+                                required>
 
-                            Add Task
+                            <button
+                                type="submit"
+                                class="add-button">
+                                Add Task
+                            </button>
 
-                        </button>
+                        </div>
 
-                    </div>
-
-                    <p
-                        class="error-message"
-                        id="errorMessage"
-                        role="alert">
-                    </p>
+                    </form>
 
                 </div>
 
 
-                <!-- TASK LIST -->
+                <!-- Task List -->
 
-                <div class="task-area">
+                <div class="task-list-container">
 
-                    <div class="task-header">
+                    <div class="task-list-header">
 
-                        <h3>
-                            Your Tasks
-                        </h3>
+                        <h3>Your Tasks</h3>
 
                         <button
                             type="button"
-                            class="clear-button"
-                            id="clearCompleted">
-
+                            id="clearCompleted"
+                            class="secondary-button">
                             Clear Completed
-
                         </button>
 
                     </div>
 
 
-                    <div
+                    <ul
+                        id="taskList"
                         class="task-list"
-                        id="taskList">
+                        aria-live="polite">
+                    </ul>
 
-                        <div
-                            class="empty-message"
-                            id="emptyMessage">
 
-                            <div class="empty-icon">
-                                ✓
-                            </div>
-
-                            <p>
-                                No tasks yet.
-                            </p>
-
-                            <span>
-                                Add your first task above!
-                            </span>
-
-                        </div>
-
-                    </div>
+                    <p
+                        id="emptyMessage"
+                        class="empty-message">
+                        No tasks yet. Add your first task above!
+                    </p>
 
                 </div>
 
@@ -244,47 +225,46 @@
         </section>
 
 
-        <!-- ==================== FEATURES ==================== -->
+        <!-- ================= ABOUT ================= -->
 
         <section
-            class="features-section"
-            id="about">
+            id="about"
+            class="about-section">
 
             <div class="container">
 
                 <div class="section-heading">
 
                     <p class="eyebrow">
-                        WHY TASKFLOW?
+                        ABOUT TASKFLOW
                     </p>
 
-                    <h2>
-                        Built for simplicity
-                    </h2>
+                    <h2>Stay organized and focused</h2>
 
                     <p>
-                        Everything you need to stay organized
-                        without unnecessary complexity.
+                        TaskFlow is a simple task management website
+                        designed to help users organize their daily
+                        activities and track their progress.
                     </p>
 
                 </div>
 
 
-                <div class="features-grid">
+                <div class="features">
 
                     <article class="feature-card">
 
-                        <div class="feature-icon">
+                        <div
+                            class="feature-icon"
+                            aria-hidden="true">
                             ✓
                         </div>
 
-                        <h3>
-                            Easy to Use
-                        </h3>
+                        <h3>Easy to Use</h3>
 
                         <p>
-                            Add and manage your tasks using
-                            a clean and simple interface.
+                            Quickly add and manage your daily tasks
+                            using a simple interface.
                         </p>
 
                     </article>
@@ -292,35 +272,35 @@
 
                     <article class="feature-card">
 
-                        <div class="feature-icon">
+                        <div
+                            class="feature-icon"
+                            aria-hidden="true">
+                            %
+                        </div>
+
+                        <h3>Track Progress</h3>
+
+                        <p>
+                            See your completion progress update
+                            automatically as tasks are completed.
+                        </p>
+
+                    </article>
+
+
+                    <article class="feature-card">
+
+                        <div
+                            class="feature-icon"
+                            aria-hidden="true">
                             ↗
                         </div>
 
-                        <h3>
-                            Fast & Responsive
-                        </h3>
+                        <h3>Responsive Design</h3>
 
                         <p>
-                            Designed to work smoothly on
-                            mobile, tablet and desktop devices.
-                        </p>
-
-                    </article>
-
-
-                    <article class="feature-card">
-
-                        <div class="feature-icon">
-                            ★
-                        </div>
-
-                        <h3>
-                            Track Progress
-                        </h3>
-
-                        <p>
-                            Monitor your completed tasks and
-                            understand your daily progress.
+                            Use TaskFlow comfortably on desktop,
+                            tablet and mobile screens.
                         </p>
 
                     </article>
@@ -334,28 +314,14 @@
     </main>
 
 
-    <!-- ==================== FOOTER ==================== -->
+    <!-- ================= FOOTER ================= -->
 
     <footer class="footer">
 
-        <div class="container footer-content">
-
-            <div>
-
-                <h3 class="footer-logo">
-                    TaskFlow
-                </h3>
-
-                <p>
-                    Organize your work.
-                    Simplify your day.
-                </p>
-
-            </div>
+        <div class="container">
 
             <p>
-                © 2026 TaskFlow.
-                Built with HTML, CSS & JavaScript.
+                © 2026 TaskFlow. Built for DecodeLabs Project 1.
             </p>
 
         </div>
@@ -363,10 +329,7 @@
     </footer>
 
 
-    <!-- JAVASCRIPT -->
-
     <script src="script.js"></script>
 
 </body>
-
-</html>//
+</html>
