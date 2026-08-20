@@ -46,3 +46,6 @@ DecodeLabs-Project-1/
 ├── style.css
 ├── script.js
 └── README.md
+## Live Demo
+Visit the live website here:
+https://sravanipakala205-cloud.github.io/DecodeLabs-project-1/
