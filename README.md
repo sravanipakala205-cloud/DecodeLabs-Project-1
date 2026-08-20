@@ -1,4 +1,4 @@
-# TaskFlow - Responsive Frontend Interface
+# TaskFlow - Smart Task Manager
 
 ## Project Overview
 
