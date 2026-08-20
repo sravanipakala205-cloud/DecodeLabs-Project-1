@@ -36,6 +36,9 @@ mobile-first development and basic JavaScript DOM manipulation.
 - Responsive Media Queries
 
 ---
+## Live Demo
+Visit the live website here:
+https://sravanipakala205-cloud.github.io/DecodeLabs-project-1/
 
 ## Project Structure
 
@@ -46,6 +49,4 @@ DecodeLabs-Project-1/
 ├── style.css
 ├── script.js
 └── README.md
-## Live Demo
-Visit the live website here:
-https://sravanipakala205-cloud.github.io/DecodeLabs-project-1/
+
