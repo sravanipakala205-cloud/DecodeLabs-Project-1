@@ -1,387 +1,345 @@
-/* =========================================================
-   TASKFLOW
-   JavaScript Functionality
-   ========================================================= */
+/* ==================================================
+   TASKFLOW - JAVASCRIPT
+   ================================================== */
 
 
-/* ==================== SELECT ELEMENTS ==================== */
+/* ================= SELECT ELEMENTS ================= */
 
-const menuToggle =
-    document.getElementById("menuToggle");
+const taskForm = document.getElementById("taskForm");
+const taskInput = document.getElementById("taskInput");
+const taskList = document.getElementById("taskList");
+const emptyMessage = document.getElementById("emptyMessage");
 
-const navigation =
-    document.getElementById("navigation");
-
-const taskInput =
-    document.getElementById("taskInput");
-
-const addTaskButton =
-    document.getElementById("addTaskButton");
-
-const taskList =
-    document.getElementById("taskList");
-
-const emptyMessage =
-    document.getElementById("emptyMessage");
-
-const errorMessage =
-    document.getElementById("errorMessage");
+const progressFill = document.getElementById("progressFill");
+const progressPercent = document.getElementById("progressPercent");
+const progressText = document.getElementById("progressText");
 
 const clearCompletedButton =
     document.getElementById("clearCompleted");
 
-const progressFill =
-    document.getElementById("progressFill");
+const menuToggle =
+    document.getElementById("menuToggle");
 
-const progressPercentage =
-    document.getElementById("progressPercentage");
-
-const progressText =
-    document.getElementById("progressText");
+const mainNav =
+    document.getElementById("mainNav");
 
 
-/* ==================== MOBILE MENU ==================== */
+/* ================= TASK DATA ================= */
 
-menuToggle.addEventListener(
-    "click",
-    function () {
+let tasks = [];
 
-        const isOpen =
-            navigation.classList.toggle("active");
+
+/* ================= MOBILE MENU ================= */
+
+menuToggle.addEventListener("click", () => {
+
+    const isOpen =
+        mainNav.classList.toggle("open");
+
+    menuToggle.setAttribute(
+        "aria-expanded",
+        String(isOpen)
+    );
+
+    menuToggle.setAttribute(
+        "aria-label",
+        isOpen
+            ? "Close navigation menu"
+            : "Open navigation menu"
+    );
+
+    menuToggle.textContent =
+        isOpen ? "✕" : "☰";
+});
+
+
+/* Close mobile menu after clicking a link */
+
+mainNav.querySelectorAll("a").forEach(link => {
+
+    link.addEventListener("click", () => {
+
+        mainNav.classList.remove("open");
 
         menuToggle.setAttribute(
             "aria-expanded",
-            isOpen
+            "false"
         );
 
         menuToggle.setAttribute(
             "aria-label",
-            isOpen
-                ? "Close navigation menu"
-                : "Open navigation menu"
+            "Open navigation menu"
         );
 
-        menuToggle.textContent =
-            isOpen ? "✕" : "☰";
+        menuToggle.textContent = "☰";
+    });
 
-    }
-);
-
-
-/* ==================== CLOSE MOBILE MENU ==================== */
-
-const navigationLinks =
-    navigation.querySelectorAll("a");
-
-navigationLinks.forEach(
-    function (link) {
-
-        link.addEventListener(
-            "click",
-            function () {
-
-                navigation.classList.remove("active");
-
-                menuToggle.setAttribute(
-                    "aria-expanded",
-                    "false"
-                );
-
-                menuToggle.setAttribute(
-                    "aria-label",
-                    "Open navigation menu"
-                );
-
-                menuToggle.textContent = "☰";
-
-            }
-        );
-
-    }
-);
+});
 
 
-/* ==================== ADD TASK ==================== */
+/* ================= ADD TASK ================= */
 
-function addTask() {
+taskForm.addEventListener("submit", (event) => {
+
+    event.preventDefault();
 
     const taskText =
         taskInput.value.trim();
 
-
-    /* Check for empty input */
-
     if (taskText === "") {
-
-        errorMessage.textContent =
-            "Please enter a task.";
-
-        taskInput.focus();
-
         return;
-
     }
 
 
-    /* Clear previous error */
+    const newTask = {
 
-    errorMessage.textContent = "";
+        id: Date.now(),
 
+        text: taskText,
 
-    /* Create task */
+        completed: false
 
-    const taskItem =
-        document.createElement("div");
-
-    taskItem.className =
-        "task-item";
+    };
 
 
-    /* Create checkbox */
-
-    const checkbox =
-        document.createElement("input");
-
-    checkbox.type = "checkbox";
-
-    checkbox.className =
-        "task-checkbox";
-
-    checkbox.setAttribute(
-        "aria-label",
-        `Mark "${taskText}" as completed`
-    );
-
-
-    /* Create task text */
-
-    const textElement =
-        document.createElement("span");
-
-    textElement.className =
-        "task-text";
-
-    textElement.textContent =
-        taskText;
-
-
-    /* Create delete button */
-
-    const deleteButton =
-        document.createElement("button");
-
-    deleteButton.type = "button";
-
-    deleteButton.className =
-        "delete-button";
-
-    deleteButton.textContent = "✕";
-
-    deleteButton.setAttribute(
-        "aria-label",
-        `Delete task "${taskText}"`
-    );
-
-
-    /* Add elements to task */
-
-    taskItem.appendChild(checkbox);
-
-    taskItem.appendChild(textElement);
-
-    taskItem.appendChild(deleteButton);
-
-
-    /* Add task to list */
-
-    taskList.appendChild(taskItem);
-
-
-    /* Hide empty message */
-
-    emptyMessage.style.display =
-        "none";
-
-
-    /* Clear input */
+    tasks.push(newTask);
 
     taskInput.value = "";
 
+    renderTasks();
+
     taskInput.focus();
 
-
-    /* Checkbox functionality */
-
-    checkbox.addEventListener(
-        "change",
-        function () {
-
-            taskItem.classList.toggle(
-                "completed",
-                checkbox.checked
-            );
-
-            updateProgress();
-
-        }
-    );
+});
 
 
-    /* Delete functionality */
+/* ================= RENDER TASKS ================= */
 
-    deleteButton.addEventListener(
-        "click",
-        function () {
+function renderTasks() {
 
-            taskItem.remove();
+    taskList.innerHTML = "";
 
-            checkEmptyList();
-
-            updateProgress();
-
-        }
-    );
-
-
-    /* Update progress */
-
-    updateProgress();
-
-}
-
-
-/* ==================== ADD BUTTON ==================== */
-
-addTaskButton.addEventListener(
-    "click",
-    addTask
-);
-
-
-/* ==================== ENTER KEY ==================== */
-
-taskInput.addEventListener(
-    "keydown",
-    function (event) {
-
-        if (event.key === "Enter") {
-
-            addTask();
-
-        }
-
-    }
-);
-
-
-/* ==================== CHECK EMPTY LIST ==================== */
-
-function checkEmptyList() {
-
-    const tasks =
-        taskList.querySelectorAll(
-            ".task-item"
-        );
 
     if (tasks.length === 0) {
 
-        emptyMessage.style.display =
-            "block";
+        emptyMessage.style.display = "block";
 
     } else {
 
-        emptyMessage.style.display =
-            "none";
-
+        emptyMessage.style.display = "none";
     }
 
-}
+
+    tasks.forEach(task => {
+
+        const listItem =
+            document.createElement("li");
+
+        listItem.className = "task-item";
 
 
-/* ==================== CLEAR COMPLETED ==================== */
+        if (task.completed) {
 
-clearCompletedButton.addEventListener(
-    "click",
-    function () {
+            listItem.classList.add("completed");
 
-        const completedTasks =
-            taskList.querySelectorAll(
-                ".task-item.completed"
-            );
+        }
 
-        completedTasks.forEach(
-            function (task) {
 
-                task.remove();
+        /* Checkbox */
+
+        const checkbox =
+            document.createElement("input");
+
+        checkbox.type = "checkbox";
+
+        checkbox.className =
+            "task-checkbox";
+
+        checkbox.checked =
+            task.completed;
+
+        checkbox.setAttribute(
+            "aria-label",
+            `Mark "${task.text}" as ${
+                task.completed
+                    ? "incomplete"
+                    : "completed"
+            }`
+        );
+
+
+        checkbox.addEventListener(
+            "change",
+            () => {
+
+                toggleTask(task.id);
 
             }
         );
 
-        checkEmptyList();
 
-        updateProgress();
+        /* Task text */
+
+        const taskText =
+            document.createElement("span");
+
+        taskText.className =
+            "task-text";
+
+        taskText.textContent =
+            task.text;
+
+
+        /* Delete button */
+
+        const deleteButton =
+            document.createElement("button");
+
+        deleteButton.type = "button";
+
+        deleteButton.className =
+            "delete-button";
+
+        deleteButton.textContent =
+            "Delete";
+
+        deleteButton.setAttribute(
+            "aria-label",
+            `Delete task: ${task.text}`
+        );
+
+
+        deleteButton.addEventListener(
+            "click",
+            () => {
+
+                deleteTask(task.id);
+
+            }
+        );
+
+
+        /* Add everything to list item */
+
+        listItem.appendChild(checkbox);
+
+        listItem.appendChild(taskText);
+
+        listItem.appendChild(deleteButton);
+
+
+        taskList.appendChild(listItem);
+
+    });
+
+
+    updateProgress();
+}
+
+
+/* ================= COMPLETE TASK ================= */
+
+function toggleTask(taskId) {
+
+    tasks = tasks.map(task => {
+
+        if (task.id === taskId) {
+
+            return {
+                ...task,
+                completed: !task.completed
+            };
+
+        }
+
+        return task;
+
+    });
+
+
+    renderTasks();
+}
+
+
+/* ================= DELETE TASK ================= */
+
+function deleteTask(taskId) {
+
+    tasks =
+        tasks.filter(task => task.id !== taskId);
+
+    renderTasks();
+}
+
+
+/* ================= CLEAR COMPLETED ================= */
+
+clearCompletedButton.addEventListener(
+    "click",
+    () => {
+
+        tasks =
+            tasks.filter(task => !task.completed);
+
+        renderTasks();
 
     }
 );
 
 
-/* ==================== UPDATE PROGRESS ==================== */
+/* ================= UPDATE PROGRESS ================= */
 
 function updateProgress() {
 
-    const allTasks =
-        taskList.querySelectorAll(
-            ".task-item"
-        );
+    const totalTasks =
+        tasks.length;
+
 
     const completedTasks =
-        taskList.querySelectorAll(
-            ".task-item.completed"
-        );
-
-
-    const total =
-        allTasks.length;
-
-    const completed =
-        completedTasks.length;
+        tasks.filter(
+            task => task.completed
+        ).length;
 
 
     let percentage = 0;
 
 
-    if (total > 0) {
+    if (totalTasks > 0) {
 
         percentage =
             Math.round(
-                (completed / total) * 100
+                (completedTasks / totalTasks) * 100
             );
 
     }
 
 
-    /* Update progress bar */
+    progressPercent.textContent =
+        `${percentage}%`;
+
+
+    progressText.textContent =
+        `${completedTasks} of ${totalTasks} tasks completed`;
+
 
     progressFill.style.width =
         `${percentage}%`;
 
 
-    /* Update percentage */
+    const progressBar =
+        document.querySelector(
+            ".progress-bar"
+        );
 
-    progressPercentage.textContent =
-        `${percentage}%`;
 
-
-    /* Update text */
-
-    progressText.textContent =
-        `${completed} of ${total} tasks completed`;
+    progressBar.setAttribute(
+        "aria-valuenow",
+        String(percentage)
+    );
 
 }
 
 
-/* ==================== INITIAL STATE ==================== */
+/* ================= INITIAL DISPLAY ================= */
 
-checkEmptyList();
-
-updateProgress();
+renderTasks();
