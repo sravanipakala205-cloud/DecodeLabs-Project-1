@@ -38,6 +38,7 @@ mobile-first development and basic JavaScript DOM manipulation.
 ---
 ## Live Demo
 Visit the live website here:
+https://sravanipakala205-cloud.github.io/DecodeLabs-Project-1/
 ## Project Structure
 
 ```text
