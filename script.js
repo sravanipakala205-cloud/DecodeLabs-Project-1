@@ -1,9 +1,10 @@
-/* ==================================================
-   TASKFLOW - JAVASCRIPT
-   ================================================== */
+
+/* =========================================
+   TASKFLOW - SMART TASK MANAGEMENT APP
+   ========================================= */
 
 
-/* ================= SELECT ELEMENTS ================= */
+/* =============== SELECT ELEMENTS =============== */
 
 const taskForm = document.getElementById("taskForm");
 const taskInput = document.getElementById("taskInput");
@@ -17,177 +18,225 @@ const progressText = document.getElementById("progressText");
 const clearCompletedButton =
     document.getElementById("clearCompleted");
 
-const menuToggle =
-    document.getElementById("menuToggle");
-
-const mainNav =
-    document.getElementById("mainNav");
+const menuToggle = document.getElementById("menuToggle");
+const mainNav = document.getElementById("mainNav");
 
 
-/* ================= TASK DATA ================= */
+/* =============== TASK STORAGE =============== */
 
-let tasks = [];
+const STORAGE_KEY = "taskflowTasks";
 
+function loadTasks() {
+    try {
+        const saved = JSON.parse(
+            localStorage.getItem(STORAGE_KEY) || "[]"
+        );
 
-/* ================= MOBILE MENU ================= */
+        return Array.isArray(saved) ? saved : [];
+    } catch {
+        return [];
+    }
+}
 
-menuToggle.addEventListener("click", () => {
+let tasks = loadTasks();
 
-    const isOpen =
-        mainNav.classList.toggle("open");
-
-    menuToggle.setAttribute(
-        "aria-expanded",
-        String(isOpen)
+function saveTasks() {
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(tasks)
     );
-
-    menuToggle.setAttribute(
-        "aria-label",
-        isOpen
-            ? "Close navigation menu"
-            : "Open navigation menu"
-    );
-
-    menuToggle.textContent =
-        isOpen ? "✕" : "☰";
-});
+}
 
 
-/* Close mobile menu after clicking a link */
+/* =============== FILTER =============== */
 
-mainNav.querySelectorAll("a").forEach(link => {
+let currentFilter = "all";
 
-    link.addEventListener("click", () => {
 
-        mainNav.classList.remove("open");
+/* =============== MOBILE MENU =============== */
+
+if (menuToggle && mainNav) {
+
+    menuToggle.addEventListener("click", () => {
+
+        const isOpen =
+            mainNav.classList.toggle("open");
 
         menuToggle.setAttribute(
             "aria-expanded",
-            "false"
+            String(isOpen)
         );
 
-        menuToggle.setAttribute(
-            "aria-label",
-            "Open navigation menu"
-        );
-
-        menuToggle.textContent = "☰";
+        menuToggle.textContent =
+            isOpen ? "✕" : "☰";
     });
 
-});
+    mainNav.querySelectorAll("a").forEach(link => {
+
+        link.addEventListener("click", () => {
+
+            mainNav.classList.remove("open");
+
+            menuToggle.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+
+            menuToggle.textContent = "☰";
+        });
+
+    });
+}
 
 
-/* ================= ADD TASK ================= */
+/* =============== ADD TASK =============== */
 
-taskForm.addEventListener("submit", (event) => {
+taskForm.addEventListener("submit", event => {
 
     event.preventDefault();
 
-    const taskText =
-        taskInput.value.trim();
+    const text = taskInput.value.trim();
 
-    if (taskText === "") {
-        return;
-    }
+    if (!text) return;
 
+    const dateInput =
+        document.getElementById("taskDate");
+
+    const priorityInput =
+        document.getElementById("taskPriority");
 
     const newTask = {
 
-        id: Date.now(),
+        id: Date.now().toString(),
 
-        text: taskText,
+        text: text,
 
-        completed: false
+        completed: false,
+
+        date: dateInput?.value || "",
+
+        priority: priorityInput?.value || "medium",
+
+        notified: false
 
     };
 
-
     tasks.push(newTask);
 
-    taskInput.value = "";
+    saveTasks();
 
     renderTasks();
+
+    taskForm.reset();
 
     taskInput.focus();
 
 });
 
 
-/* ================= RENDER TASKS ================= */
+/* =============== RENDER TASKS =============== */
 
 function renderTasks() {
 
     taskList.innerHTML = "";
 
+    const filteredTasks = tasks.filter(task => {
 
-    if (tasks.length === 0) {
-
-        emptyMessage.style.display = "block";
-
-    } else {
-
-        emptyMessage.style.display = "none";
-    }
-
-
-    tasks.forEach(task => {
-
-        const listItem =
-            document.createElement("li");
-
-        listItem.className = "task-item";
-
-
-        if (task.completed) {
-
-            listItem.classList.add("completed");
-
+        if (currentFilter === "pending") {
+            return !task.completed;
         }
 
+        if (currentFilter === "completed") {
+            return task.completed;
+        }
+
+        return true;
+    });
+
+    emptyMessage.style.display =
+        filteredTasks.length === 0 ? "block" : "none";
+
+    filteredTasks.forEach(task => {
+
+        const item = document.createElement("li");
+
+        item.className = "task-item";
+
+        if (task.completed) {
+            item.classList.add("completed");
+        }
 
         /* Checkbox */
 
-        const checkbox =
-            document.createElement("input");
+        const checkbox = document.createElement("input");
 
         checkbox.type = "checkbox";
 
-        checkbox.className =
-            "task-checkbox";
+        checkbox.className = "task-checkbox";
 
-        checkbox.checked =
-            task.completed;
+        checkbox.checked = task.completed;
 
         checkbox.setAttribute(
             "aria-label",
-            `Mark "${task.text}" as ${
-                task.completed
-                    ? "incomplete"
-                    : "completed"
-            }`
+            "Complete " + task.text
         );
 
-
-        checkbox.addEventListener(
-            "change",
-            () => {
-
-                toggleTask(task.id);
-
-            }
-        );
+        checkbox.addEventListener("change", () => {
+            toggleTask(task.id);
+        });
 
 
-        /* Task text */
+        /* Task details */
 
-        const taskText =
-            document.createElement("span");
+        const details = document.createElement("div");
 
-        taskText.className =
-            "task-text";
+        details.className = "task-details";
 
-        taskText.textContent =
-            task.text;
+        const title = document.createElement("span");
+
+        title.className = "task-text";
+
+        title.textContent = task.text;
+
+        details.appendChild(title);
+
+
+        /* Priority */
+
+        const meta = document.createElement("div");
+
+        meta.className = "task-meta";
+
+        const priority = document.createElement("span");
+
+        priority.className =
+            "task-priority priority-" +
+            (task.priority || "medium");
+
+        priority.textContent =
+            (task.priority || "medium").toUpperCase() +
+            " PRIORITY";
+
+        meta.appendChild(priority);
+
+
+        /* Deadline */
+
+        if (task.date) {
+
+            const deadline = document.createElement("span");
+
+            const date = new Date(task.date);
+
+            deadline.textContent =
+                "Due: " +
+                date.toLocaleString();
+
+            meta.appendChild(deadline);
+
+        }
+
+        details.appendChild(meta);
 
 
         /* Delete button */
@@ -197,53 +246,37 @@ function renderTasks() {
 
         deleteButton.type = "button";
 
-        deleteButton.className =
-            "delete-button";
+        deleteButton.className = "delete-button";
 
-        deleteButton.textContent =
-            "Delete";
+        deleteButton.textContent = "Delete";
 
-        deleteButton.setAttribute(
-            "aria-label",
-            `Delete task: ${task.text}`
-        );
+        deleteButton.addEventListener("click", () => {
+            deleteTask(task.id);
+        });
 
 
-        deleteButton.addEventListener(
-            "click",
-            () => {
+        item.appendChild(checkbox);
 
-                deleteTask(task.id);
+        item.appendChild(details);
 
-            }
-        );
+        item.appendChild(deleteButton);
 
-
-        /* Add everything to list item */
-
-        listItem.appendChild(checkbox);
-
-        listItem.appendChild(taskText);
-
-        listItem.appendChild(deleteButton);
-
-
-        taskList.appendChild(listItem);
+        taskList.appendChild(item);
 
     });
 
-
     updateProgress();
+
 }
 
 
-/* ================= COMPLETE TASK ================= */
+/* =============== COMPLETE TASK =============== */
 
-function toggleTask(taskId) {
+function toggleTask(id) {
 
     tasks = tasks.map(task => {
 
-        if (task.id === taskId) {
+        if (task.id === id) {
 
             return {
                 ...task,
@@ -256,90 +289,183 @@ function toggleTask(taskId) {
 
     });
 
+    saveTasks();
 
     renderTasks();
+
 }
 
 
-/* ================= DELETE TASK ================= */
+/* =============== DELETE TASK =============== */
 
-function deleteTask(taskId) {
+function deleteTask(id) {
 
-    tasks =
-        tasks.filter(task => task.id !== taskId);
+    tasks = tasks.filter(task => task.id !== id);
+
+    saveTasks();
 
     renderTasks();
+
 }
 
 
-/* ================= CLEAR COMPLETED ================= */
+/* =============== CLEAR COMPLETED =============== */
 
-clearCompletedButton.addEventListener(
-    "click",
-    () => {
+if (clearCompletedButton) {
 
-        tasks =
-            tasks.filter(task => !task.completed);
+    clearCompletedButton.addEventListener("click", () => {
+
+        tasks = tasks.filter(task => !task.completed);
+
+        saveTasks();
 
         renderTasks();
 
-    }
-);
-
-
-/* ================= UPDATE PROGRESS ================= */
-
-function updateProgress() {
-
-    const totalTasks =
-        tasks.length;
-
-
-    const completedTasks =
-        tasks.filter(
-            task => task.completed
-        ).length;
-
-
-    let percentage = 0;
-
-
-    if (totalTasks > 0) {
-
-        percentage =
-            Math.round(
-                (completedTasks / totalTasks) * 100
-            );
-
-    }
-
-
-    progressPercent.textContent =
-        `${percentage}%`;
-
-
-    progressText.textContent =
-        `${completedTasks} of ${totalTasks} tasks completed`;
-
-
-    progressFill.style.width =
-        `${percentage}%`;
-
-
-    const progressBar =
-        document.querySelector(
-            ".progress-bar"
-        );
-
-
-    progressBar.setAttribute(
-        "aria-valuenow",
-        String(percentage)
-    );
+    });
 
 }
 
 
-/* ================= INITIAL DISPLAY ================= */
+/* =============== TASK FILTERS =============== */
+
+document.querySelectorAll(".filter-button").forEach(button => {
+
+    button.addEventListener("click", () => {
+
+        currentFilter = button.dataset.filter;
+
+        document.querySelectorAll(".filter-button")
+            .forEach(btn => btn.classList.remove("active"));
+
+        button.classList.add("active");
+
+        renderTasks();
+
+    });
+
+});
+
+
+/* =============== PROGRESS =============== */
+
+function updateProgress() {
+
+    const total = tasks.length;
+
+    const completed = tasks.filter(
+        task => task.completed
+    ).length;
+
+    const percentage = total > 0
+        ? Math.round((completed / total) * 100)
+        : 0;
+
+    progressPercent.textContent = percentage + "%";
+
+    progressText.textContent =
+        completed + " of " + total + " tasks completed";
+
+    progressFill.style.width = percentage + "%";
+
+    const bar = document.querySelector(".progress-bar");
+
+    if (bar) {
+        bar.setAttribute("aria-valuenow", percentage);
+    }
+
+}
+
+
+/* =============== NOTIFICATIONS =============== */
+
+const notificationButton =
+    document.getElementById("enableNotifications");
+
+if (notificationButton) {
+
+    notificationButton.addEventListener("click", async () => {
+
+        if (!("Notification" in window)) {
+
+            alert("Your browser does not support notifications.");
+
+            return;
+        }
+
+        const permission =
+            await Notification.requestPermission();
+
+        if (permission === "granted") {
+
+            alert("TaskFlow notifications enabled!");
+
+            checkReminders();
+
+        } else {
+
+            alert("Please allow notifications in browser settings.");
+
+        }
+
+    });
+
+}
+
+
+/* =============== DEADLINE REMINDERS =============== */
+
+function checkReminders() {
+
+    if (!("Notification" in window)) return;
+
+    if (Notification.permission !== "granted") return;
+
+    const now = Date.now();
+
+    tasks.forEach(task => {
+
+        if (!task.date || task.completed || task.notified) {
+            return;
+        }
+
+        const deadline = new Date(task.date).getTime();
+
+        const timeLeft = deadline - now;
+
+        // Reminder 15 minutes before deadline.
+        // Also remind when the deadline has passed.
+
+        if (timeLeft <= 15 * 60 * 1000) {
+
+            new Notification("TaskFlow Reminder", {
+
+                body: task.text +
+                    (timeLeft < 0
+                        ? " - Deadline passed!"
+                        : " - Your deadline is approaching!"),
+
+                tag: "task-" + task.id
+
+            });
+
+            task.notified = true;
+
+            saveTasks();
+
+        }
+
+    });
+
+}
+
+
+/* Check reminders every minute while the page is open */
+
+checkReminders();
+
+setInterval(checkReminders, 60 * 1000);
+
+
+/* =============== INITIAL DISPLAY =============== */
 
 renderTasks();
