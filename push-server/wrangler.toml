@@ -1,0 +1,14 @@
+name = "taskflow-notifications"
+main = "src/index.js"
+compatibility_date = "2026-11-26"
+
+[vars]
+APP_URL = "https://sravanipakala205-cloud.github.io/DecodeLabs-Project-1/"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "taskflow-db"
+database_id = "16ee6b49-2d43-40a8-9af9-8523e949e6a3"
+
+[triggers]
+crons = ["* * * * *"]
