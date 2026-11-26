@@ -378,38 +378,52 @@ function updateProgress() {
 
 /* =============== NOTIFICATIONS =============== */
 
-const notificationButton =
-    document.getElementById("enableNotifications");
 
-if (notificationButton) {
+const notificationButton = document.getElementById("enableNotifications");
 
-    notificationButton.addEventListener("click", async () => {
+function updateNotificationButton() {
+    if (!("Notification" in window)) {
+        notificationButton.textContent = "Notifications Not Supported";
+        notificationButton.disabled = true;
+        return;
+    }
 
-        if (!("Notification" in window)) {
-
-            alert("Your browser does not support notifications.");
-
-            return;
-        }
-
-        const permission =
-            await Notification.requestPermission();
-
-        if (permission === "granted") {
-
-            alert("TaskFlow notifications enabled!");
-
-            checkReminders();
-
-        } else {
-
-            alert("Please allow notifications in browser settings.");
-
-        }
-
-    });
-
+    if (Notification.permission === "granted") {
+        notificationButton.textContent = "✓ Notifications Enabled";
+    } else if (Notification.permission === "denied") {
+        notificationButton.textContent = "Notifications Blocked";
+    } else {
+        notificationButton.textContent = "Enable Notifications";
+    }
 }
+
+notificationButton.addEventListener("click", async () => {
+    if (!("Notification" in window)) return;
+
+    if (Notification.permission === "granted") {
+        new Notification("TaskFlow", {
+            body: "Notifications are already enabled!"
+        });
+        return;
+    }
+
+    if (Notification.permission === "denied") {
+        alert("Notifications are blocked. Please allow them in your browser site settings.");
+        return;
+    }
+
+    const permission = await Notification.requestPermission();
+
+    updateNotificationButton();
+
+    if (permission === "granted") {
+        new Notification("TaskFlow", {
+            body: "Notifications enabled successfully!"
+        });
+    }
+});
+
+updateNotificationButton();
 
 
 /* =============== DEADLINE REMINDERS =============== */
