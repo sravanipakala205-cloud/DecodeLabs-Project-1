@@ -478,3 +478,27 @@ setInterval(checkReminders, 60 * 1000);
 /* =============== INITIAL DISPLAY =============== */
 
 renderTasks();
+
+
+document.getElementById("enableNotifications")
+    .addEventListener("click", async function () {
+
+        if (!("Notification" in window)) {
+            alert("Your browser does not support notifications.");
+            return;
+        }
+
+        let permission = Notification.permission;
+
+        if (permission === "default") {
+            permission = await Notification.requestPermission();
+        }
+
+        if (permission === "granted") {
+            new Notification("TaskFlow Test", {
+                body: "Congratulations! Your notifications are working."
+            });
+        } else {
+            alert("Notifications are not allowed. Check Chrome site settings.");
+        }
+    });
