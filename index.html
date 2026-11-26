@@ -1,381 +1,104 @@
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <meta name="theme-color" content="#30484c">
-
-    <title>TaskFlow - Smart Task Manager</title>
-
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1764b5">
+  <meta name="description" content="TaskFlow helps you organize tasks, track progress and stay productive.">
+  <title>TaskFlow - Smart Task Manager</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
+  <header class="header">
+    <div class="container nav-container">
+      <a href="#home" class="logo" aria-label="TaskFlow home"><span class="logo-mark">✓</span>Task<span>Flow</span></a>
+      <button class="menu-toggle" id="menuToggle" aria-label="Open navigation menu" aria-expanded="false">☰</button>
+      <nav class="nav" id="mainNav">
+        <a href="#home">Home</a><a href="#tasks">My Tasks</a><a href="#about">Features</a>
+      </nav>
+    </div>
+  </header>
 
-    <!-- HEADER -->
-
-    <header class="header">
-        <div class="container nav-container">
-
-            <a href="#" class="logo">
-                Task<span>Flow</span>
-            </a>
-
-            <button class="menu-toggle"
-                id="menuToggle"
-                aria-label="Open navigation menu"
-                aria-expanded="false">
-                ☰
-            </button>
-
-            <nav class="nav" id="mainNav">
-                <a href="#home">Home</a>
-                <a href="#tasks">My Tasks</a>
-                <a href="#about">Features</a>
-            </nav>
-
-        </div>
-    </header>
-
-
-    <!-- HERO SECTION -->
-
+  <main>
     <section class="hero" id="home">
-
-        <div class="container hero-container">
-
-            <div>
-
-                <p class="eyebrow">SMART TASK MANAGEMENT</p>
-
-                <h1>
-                    Organize Your Day.
-                    <span>Achieve More.</span>
-                </h1>
-
-                <p class="hero-description">
-                    Manage your daily tasks, track your progress
-                    and receive reminders so you never miss
-                    important deadlines.
-                </p>
-
-                <a href="#tasks" class="primary-button">
-                    Get Started
-                </a>
-
-            </div>
-
-
-            <!-- PROGRESS CARD -->
-
-            <div class="progress-card">
-
-                <div class="progress-header">
-
-                    <h2>My Progress</h2>
-
-                    <strong id="progressPercent">0%</strong>
-
-                </div>
-
-                <div class="progress-bar"
-                    role="progressbar"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                    aria-valuenow="0">
-
-                    <div class="progress-fill"
-                        id="progressFill">
-                    </div>
-
-                </div>
-
-                <p id="progressText">
-                    0 of 0 tasks completed
-                </p>
-
-            </div>
-
+      <div class="container hero-container">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="eyebrow-dot"></span> SMART TASK MANAGEMENT</p>
+          <h1>Organize Your Day.<br><span>Achieve More.</span></h1>
+          <p class="hero-description">Plan your work, stay focused and make every day more productive. Keep all your important tasks in one simple place.</p>
+          <a href="#tasks" class="primary-button">Get Started <span aria-hidden="true">→</span></a>
+          <div class="hero-note"><span>✓</span> A little progress every day adds up.</div>
         </div>
-
+        <div class="hero-visual" aria-label="Task checklist illustration">
+          <div class="visual-orbit orbit-one"></div><div class="visual-orbit orbit-two"></div>
+          <div class="visual-card">
+            <div class="visual-card-top"><span class="visual-kicker">YOUR DAILY PLAN</span><span class="visual-spark">✦</span></div>
+            <div class="visual-title">Make today count!</div>
+            <div class="visual-task"><span class="visual-check">✓</span><span>Plan your priorities</span><span class="visual-tag">Done</span></div>
+            <div class="visual-task"><span class="visual-check">✓</span><span>Focus on important work</span><span class="visual-tag">Done</span></div>
+            <div class="visual-task"><span class="visual-empty"></span><span>Take a well-earned break</span><span class="visual-tag tag-next">Next</span></div>
+            <div class="visual-card-bottom"><span>Keep moving forward</span><span>✦ ✦ ✦</span></div>
+          </div>
+          <div class="floating-bubble bubble-one">✦</div><div class="floating-bubble bubble-two">✓</div>
+        </div>
+      </div>
     </section>
 
-
-    <!-- TASK SECTION -->
+    <section class="progress-section" aria-label="Task progress">
+      <div class="container">
+        <div class="progress-card">
+          <div class="progress-copy"><div class="progress-icon">↗</div><div><p class="card-kicker">YOUR PRODUCTIVITY</p><h2>My Progress</h2><p id="progressText">0 of 0 tasks completed</p></div></div>
+          <div class="progress-summary"><strong id="progressPercent">0%</strong><span>completed</span><div class="progress-bar" role="progressbar" aria-label="Tasks completed" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-fill" id="progressFill"></div></div></div>
+        </div>
+      </div>
+    </section>
 
     <section class="tasks-section" id="tasks">
-
-        <div class="container">
-
-            <div class="section-heading">
-
-                <p class="eyebrow">STAY PRODUCTIVE</p>
-
-                <h2>Manage Your Tasks</h2>
-
-                <p>
-                    Add your tasks, set deadlines and organize
-                    your daily activities.
-                </p>
-
-            </div>
-
-
-            <!-- TASK FORM -->
-
-            <div class="task-form-card">
-
-                <form id="taskForm">
-
-                    <label for="taskInput">
-                        Enter Your Task
-                    </label>
-
-                    <div class="input-row">
-
-                        <input
-                            type="text"
-                            id="taskInput"
-                            placeholder="What do you need to do?"
-                            required
-                        >
-
-                        <button type="submit"
-                            class="add-button">
-                            Add Task
-                        </button>
-
-                    </div>
-
-
-                    <!-- DEADLINE AND PRIORITY -->
-
-                    <div class="task-input-group">
-
-                        <div>
-
-                            <label for="taskDate">
-                                Task Deadline
-                            </label>
-
-                            <input
-                                type="datetime-local"
-                                id="taskDate"
-                            >
-
-                        </div>
-
-                        <div>
-
-                            <label for="taskPriority">
-                                Task Priority
-                            </label>
-
-                            <select id="taskPriority">
-
-                                <option value="low">
-                                    Low
-                                </option>
-
-                                <option value="medium" selected>
-                                    Medium
-                                </option>
-
-                                <option value="high">
-                                    High
-                                </option>
-
-                            </select>
-
-                        </div>
-
-                    </div>
-
-                </form>
-
-            </div>
-
-
-            <!-- NOTIFICATION SETTINGS -->
-
-            <div class="notification-card">
-
-                <h3>Notification Settings</h3>
-
-                <p>
-                    Enable reminders for your tasks.
-                </p>
-
-                <button
-                    type="button"
-                    class="notification-button"
-                    id="enableNotifications">
-
-                    Enable Notifications
-
-                </button>
-
-            </div>
-
-
-            <!-- TASK FILTERS -->
-
-            <div class="task-list-container">
-
-                <div class="task-filters">
-
-                    <button
-                        type="button"
-                        class="filter-button active"
-                        data-filter="all">
-
-                        All Tasks
-
-                    </button>
-
-                    <button
-                        type="button"
-                        class="filter-button"
-                        data-filter="pending">
-
-                        Pending
-
-                    </button>
-
-                    <button
-                        type="button"
-                        class="filter-button"
-                        data-filter="completed">
-
-                        Completed
-
-                    </button>
-
-                </div>
-
-
-                <!-- TASK LIST -->
-
-                <div class="task-list-header">
-
-                    <h3>My Task List</h3>
-
-                    <button
-                        type="button"
-                        class="secondary-button"
-                        id="clearCompleted">
-
-                        Clear Completed
-
-                    </button>
-
-                </div>
-
-                <p id="emptyMessage" class="empty-message">
-                    No tasks yet. Add your first task!
-                </p>
-
-                <ul id="taskList" class="task-list">
-                </ul>
-
-            </div>
-
+      <div class="container">
+        <div class="section-heading"><p class="eyebrow">STAY PRODUCTIVE</p><h2>Manage Your Tasks</h2><p>Break your goals into small steps and keep everything on track.</p></div>
+        <div class="workspace-grid">
+          <div class="task-form-card">
+            <div class="form-heading"><div class="form-icon">＋</div><div><h3>Create a task</h3><p>What would you like to get done?</p></div></div>
+            <form id="taskForm">
+              <label for="taskInput">Task name</label>
+              <div class="input-row"><input type="text" id="taskInput" placeholder="e.g. Finish project report" required><button type="submit" class="add-button">Add Task <span>＋</span></button></div>
+              <div class="task-input-group">
+                <div><label for="taskDate">Deadline</label><input type="datetime-local" id="taskDate"></div>
+                <div><label for="taskPriority">Priority</label><select id="taskPriority"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option></select></div>
+              </div>
+            </form>
+          </div>
+          <aside class="notification-card">
+            <div class="notification-icon">♧</div><p class="card-kicker">STAY ON TRACK</p><h3>Never miss a deadline</h3><p>Turn on browser notifications to get reminders about upcoming tasks while TaskFlow is open.</p>
+            <button type="button" class="notification-button" id="enableNotifications">Enable Notifications <span>→</span></button>
+            <p class="notification-hint">You can change this permission in your browser settings.</p>
+          </aside>
         </div>
 
+        <div class="task-list-container">
+          <div class="task-list-top"><div><p class="eyebrow">YOUR WORKSPACE</p><h3>My Task List</h3></div><button type="button" class="secondary-button" id="clearCompleted">Clear Completed</button></div>
+          <div class="task-filters" role="group" aria-label="Filter tasks">
+            <button type="button" class="filter-button active" data-filter="all">All Tasks</button>
+            <button type="button" class="filter-button" data-filter="pending">Pending</button>
+            <button type="button" class="filter-button" data-filter="completed">Completed</button>
+          </div>
+          <p id="emptyMessage" class="empty-message">No tasks yet. Add your first task to get started!</p>
+          <ul id="taskList" class="task-list"></ul>
+        </div>
+      </div>
     </section>
-
-
-    <!-- FEATURES SECTION -->
 
     <section class="about-section" id="about">
-
-        <div class="container">
-
-            <div class="section-heading">
-
-                <p class="eyebrow">WHY TASKFLOW?</p>
-
-                <h2>Everything You Need</h2>
-
-                <p>
-                    Stay organized and make your everyday
-                    activities easier.
-                </p>
-
-            </div>
-
-
-            <div class="features">
-
-                <div class="feature-card">
-
-                    <div class="feature-icon">✓</div>
-
-                    <h3>Task Management</h3>
-
-                    <p>
-                        Add, complete and delete your daily tasks.
-                    </p>
-
-                </div>
-
-
-                <div class="feature-card">
-
-                    <div class="feature-icon">◷</div>
-
-                    <h3>Smart Reminders</h3>
-
-                    <p>
-                        Get browser notifications for upcoming
-                        task deadlines.
-                    </p>
-
-                </div>
-
-
-                <div class="feature-card">
-
-                    <div class="feature-icon">↗</div>
-
-                    <h3>Track Progress</h3>
-
-                    <p>
-                        Monitor your completed tasks and
-                        productivity.
-                    </p>
-
-                </div>
-
-            </div>
-
+      <div class="container"><div class="section-heading"><p class="eyebrow">WHY TASKFLOW?</p><h2>Everything You Need to Stay Organized</h2><p>Simple tools to help you focus on what matters most.</p></div>
+        <div class="features">
+          <article class="feature-card"><div class="feature-icon">✓</div><h3>Task Management</h3><p>Add, complete and organize your daily tasks in one place.</p></article>
+          <article class="feature-card"><div class="feature-icon">◷</div><h3>Smart Reminders</h3><p>Get browser notifications for approaching task deadlines while the page is open.</p></article>
+          <article class="feature-card"><div class="feature-icon">↗</div><h3>Track Progress</h3><p>See your completed tasks and celebrate every bit of progress.</p></article>
         </div>
-
+      </div>
     </section>
-
-
-    <!-- FOOTER -->
-
-    <footer class="footer">
-
-        <div class="container">
-
-            <p>
-                © 2026 TaskFlow. Stay Organized. Achieve More.
-            </p>
-
-        </div>
-
-    </footer>
-
-
-    <!-- JAVASCRIPT -->
-
-    <script src="script.js"></script>
-
+  </main>
+  <footer class="footer"><div class="container footer-inner"><a href="#home" class="footer-logo">Task<span>Flow</span></a><p>© 2026 TaskFlow. Stay Organized. Achieve More.</p></div></footer>
+  <script src="script.js"></script>
 </body>
-
 </html>
