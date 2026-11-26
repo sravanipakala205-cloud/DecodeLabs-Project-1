@@ -176,3 +176,171 @@
         gap: 4px;
     }
 }
+
+
+/* =========================================
+   TASKFLOW - BLUE BACKGROUND THEME
+   ========================================= */
+
+/* Main website background */
+body {
+    background: #eaf3ff;
+    color: #203653;
+}
+
+/* Header */
+.header {
+    background: #ffffff;
+    border-bottom: 1px solid #cbdcf2;
+}
+
+/* Logo */
+.logo {
+    color: #23466f;
+}
+
+.logo span {
+    color: #3984d6;
+}
+
+/* Hero section */
+.hero {
+    background: linear-gradient(
+        135deg,
+        #eaf3ff 0%,
+        #c6ddff 50%,
+        #a9ccf7 100%
+    );
+}
+
+.hero h1 {
+    color: #193b65;
+}
+
+.hero h1 span {
+    color: #3478c9;
+}
+
+/* Buttons */
+.primary-button,
+.add-button,
+.notification-button {
+    background: #3478c9;
+    color: #ffffff;
+}
+
+.primary-button:hover,
+.add-button:hover,
+.notification-button:hover {
+    background: #205b9e;
+}
+
+/* Progress card */
+.progress-card {
+    background: #ffffff;
+    border-color: #cbdcf2;
+}
+
+.progress-header h2 {
+    color: #23466f;
+}
+
+.progress-header strong {
+    color: #3478c9;
+}
+
+.progress-bar {
+    background: #d7e7fb;
+}
+
+.progress-fill {
+    background: #3478c9;
+}
+
+/* Sections */
+.tasks-section {
+    background: #f5f9ff;
+}
+
+.about-section {
+    background: #e4efff;
+}
+
+/* Section headings */
+.section-heading h2 {
+    color: #193b65;
+}
+
+/* Task form */
+.task-form-card {
+    background: #edf5ff;
+    border-color: #cbdcf2;
+}
+
+.task-form-card label {
+    color: #23466f;
+}
+
+#taskInput {
+    border-color: #b9d0ed;
+}
+
+/* Task list */
+.task-item {
+    background: #ffffff;
+    border-color: #cbdcf2;
+}
+
+.task-text {
+    color: #203653;
+}
+
+.task-item.completed .task-text {
+    color: #71849d;
+}
+
+/* Filters */
+.filter-button {
+    border-color: #b9d0ed;
+    color: #23466f;
+}
+
+.filter-button.active {
+    background: #3478c9;
+    color: #ffffff;
+}
+
+/* Notification card */
+.notification-card {
+    background: #ffffff;
+    border-color: #cbdcf2;
+}
+
+.notification-card h3 {
+    color: #23466f;
+}
+
+/* Features */
+.feature-card {
+    background: #ffffff;
+    border-color: #cbdcf2;
+}
+
+.feature-icon {
+    background: #dceaff;
+    color: #3478c9;
+}
+
+/* Footer */
+.footer {
+    background: #193b65;
+    color: #ffffff;
+}
+
+/* Mobile navigation */
+@media (max-width: 700px) {
+    .nav {
+        background: #ffffff;
+        border-bottom-color: #cbdcf2;
+    }
+}
