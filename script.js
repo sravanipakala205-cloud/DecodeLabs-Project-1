@@ -414,6 +414,7 @@ if (notificationButton) {
 
 /* =============== DEADLINE REMINDERS =============== */
 
+
 function checkReminders() {
 
     if (!("Notification" in window)) return;
@@ -430,28 +431,22 @@ function checkReminders() {
 
         const deadline = new Date(task.date).getTime();
 
+        if (!Number.isFinite(deadline)) return;
+
         const timeLeft = deadline - now;
 
-        // Reminder 15 minutes before deadline.
-        // Also remind when the deadline has passed.
+        // Notify only during the 15 minutes before the deadline.
 
-        if (timeLeft <= 15 * 60 * 1000) {
+        if (timeLeft <= 15 * 60 * 1000 && timeLeft >= 0) {
 
             new Notification("TaskFlow Reminder", {
-
-                body: task.text +
-                    (timeLeft < 0
-                        ? " - Deadline passed!"
-                        : " - Your deadline is approaching!"),
-
+                body: task.text + " - Your deadline is approaching!",
                 tag: "task-" + task.id
-
             });
 
             task.notified = true;
 
             saveTasks();
-
         }
 
     });
