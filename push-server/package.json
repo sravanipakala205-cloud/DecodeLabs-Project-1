@@ -1,0 +1,10 @@
+{
+  "name": "taskflow-push-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Background push notification server for TaskFlow",
+  "main": "server.js",
+  "scripts": { "start": "node server.js", "generate-vapid": "node generate-vapid.js" },
+  "engines": { "node": ">=18" },
+  "dependencies": { "cors": "^2.8.5", "express": "^4.21.2", "web-push": "^3.6.7" }
+}
