@@ -376,104 +376,126 @@ function updateProgress() {
 }
 
 
-/* =============== NOTIFICATIONS =============== */
-
+/* =============== PUSH NOTIFICATIONS =============== */
 
 const notificationButton = document.getElementById("enableNotifications");
+const API_BASE_URL = window.TASKFLOW_API_URL || "";
+const DEVICE_KEY = "taskflowDeviceId";
+const deviceId = localStorage.getItem(DEVICE_KEY) || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random());
+localStorage.setItem(DEVICE_KEY, deviceId);
 
 function updateNotificationButton() {
     if (!("Notification" in window)) {
         notificationButton.textContent = "Notifications Not Supported";
         notificationButton.disabled = true;
-        return;
-    }
-
-    if (Notification.permission === "granted") {
-        notificationButton.textContent = "✓ Notifications Enabled";
     } else if (Notification.permission === "denied") {
         notificationButton.textContent = "Notifications Blocked";
+    } else if (Notification.permission === "granted") {
+        notificationButton.textContent = "Enable Background Reminders";
     } else {
         notificationButton.textContent = "Enable Notifications";
     }
 }
 
-notificationButton.addEventListener("click", async () => {
-    if (!("Notification" in window)) return;
+function urlBase64ToUint8Array(value) {
+    const padding = "=".repeat((4 - value.length % 4) % 4);
+    const base64 = (value + padding).replace(/-/g, "+").replace(/_/g, "/");
+    return Uint8Array.from(atob(base64), char => char.charCodeAt(0));
+}
 
-    if (Notification.permission === "granted") {
-        new Notification("TaskFlow", {
-            body: "Notifications are already enabled!"
+async function syncTasksToPushServer() {
+    if (!API_BASE_URL) return;
+    try {
+        await fetch(API_BASE_URL + "/api/tasks", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ deviceId, tasks })
         });
+    } catch (error) {
+        console.error("TaskFlow task sync failed:", error);
+    }
+}
+
+async function enableBackgroundNotifications() {
+    if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+        alert("Background push notifications are not supported by this browser.");
         return;
     }
-
-    if (Notification.permission === "denied") {
-        alert("Notifications are blocked. Please allow them in your browser site settings.");
+    if (!API_BASE_URL) {
+        alert("The TaskFlow push server is not connected yet. Follow PUSH-SETUP.md in the GitHub repository to deploy it.");
         return;
     }
-
-    const permission = await Notification.requestPermission();
-
-    updateNotificationButton();
-
-    if (permission === "granted") {
-        new Notification("TaskFlow", {
-            body: "Notifications enabled successfully!"
-        });
+    let permission = Notification.permission;
+    if (permission === "default") permission = await Notification.requestPermission();
+    if (permission !== "granted") {
+        alert("Please allow notifications in your browser site settings.");
+        updateNotificationButton();
+        return;
     }
-});
+    try {
+        const registration = await navigator.serviceWorker.ready;
+        const configResponse = await fetch(API_BASE_URL + "/api/config");
+        if (!configResponse.ok) throw new Error("Could not load push server configuration.");
+        const { publicKey } = await configResponse.json();
+        if (!publicKey) throw new Error("Push server VAPID public key is not configured.");
+        let subscription = await registration.pushManager.getSubscription();
+        if (!subscription) {
+            subscription = await registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: urlBase64ToUint8Array(publicKey)
+            });
+        }
+        const response = await fetch(API_BASE_URL + "/api/subscribe", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ deviceId, subscription })
+        });
+        if (!response.ok) throw new Error("Could not save this device's push subscription.");
+        await syncTasksToPushServer();
+        alert("Background notifications enabled on this device!");
+        updateNotificationButton();
+    } catch (error) {
+        console.error(error);
+        alert("Could not enable background notifications: " + error.message);
+    }
+}
 
+notificationButton.addEventListener("click", enableBackgroundNotifications);
 updateNotificationButton();
 
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js")
+            .then(() => console.log("TaskFlow service worker registered."))
+            .catch(error => console.error("Service worker registration failed:", error));
+    });
+}
 
-/* =============== DEADLINE REMINDERS =============== */
+const originalSaveTasks = saveTasks;
+saveTasks = function () {
+    originalSaveTasks();
+    syncTasksToPushServer();
+};
 
-
+/* Fallback reminders while this page is open. */
 function checkReminders() {
-
-    if (!("Notification" in window)) return;
-
-    if (Notification.permission !== "granted") return;
-
+    if (!("Notification" in window) || Notification.permission !== "granted") return;
     const now = Date.now();
-
     tasks.forEach(task => {
-
-        if (!task.date || task.completed || task.notified) {
-            return;
-        }
-
-        const deadline = new Date(task.date).getTime();
-
-        if (!Number.isFinite(deadline)) return;
-
-        const timeLeft = deadline - now;
-
-        // Notify only during the 15 minutes before the deadline.
-
+        if (!task.date || task.completed || task.notified) return;
+        const timeLeft = new Date(task.date).getTime() - now;
         if (timeLeft <= 15 * 60 * 1000 && timeLeft >= 0) {
-
             new Notification("TaskFlow Reminder", {
                 body: task.text + " - Your deadline is approaching!",
                 tag: "task-" + task.id
             });
-
             task.notified = true;
-
-            saveTasks();
+            originalSaveTasks();
         }
-
     });
-
 }
-
-
-/* Check reminders every minute while the page is open */
-
 checkReminders();
-
 setInterval(checkReminders, 60 * 1000);
-
 
 /* =============== INITIAL DISPLAY =============== */
 
