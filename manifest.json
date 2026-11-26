@@ -1,0 +1,11 @@
+{
+  "name": "TaskFlow - Smart Task Manager",
+  "short_name": "TaskFlow",
+  "description": "Organize tasks and receive deadline reminders.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f9ff",
+  "theme_color": "#1764b5",
+  "icons": [{ "src": "./icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
